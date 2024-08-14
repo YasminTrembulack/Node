@@ -19,14 +19,16 @@ dessa forma digitando o     npm run dev     ele rodara o projeto.
 npm i fastify
 
 
-
 npm i prisma -D ## Ajuda em acessar o banco de dados
 npx prisma init --datasource-provider SQLite ## Criando database config
-
+// Apos rodar esse comando rodar o migrate, e toda vez que quiser atualizar o banco roda o migrate.
 npx prisma migrate dev ## compara mudanças e atualiza o arquivo database para a att atual.
+
 
 npm i zod ## ajuda a validar dados
 
 npm i fastify-type-provider-zod
 
-npx prisma studio
+npm i dayjs
+
+npx prisma studio ## Visualizar tables atraves do prisma
