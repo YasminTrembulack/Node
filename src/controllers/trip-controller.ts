@@ -22,7 +22,7 @@ export class TripsController {
       } else {
         res.status(500).send({ error: 'Internal server error' });
       }
-        console.log("ERRO");
+      
     }
   }
 }
