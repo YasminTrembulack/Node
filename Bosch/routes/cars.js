@@ -5,7 +5,7 @@ const router = express.Router();
 const allCars = [];
 
 router.get('/api/cars', (req, res) => {
-    res.send({ data: allCars });
+    return res.send({ data: allCars });
 })
 
 router.post('/api/cars', (req, res) => {
@@ -31,7 +31,7 @@ router.post('/api/cars', (req, res) => {
 
 router.get('/api/cars/:id?', (req, res) => {
     const { id } = req.params;
-    const result = allCars.filter(car => car.id == id );
+    const result = allCars.filter((car) => car.id == id );
     if(!result)
         return res.status(404).send({ message: "Car not found." });
 
@@ -40,14 +40,12 @@ router.get('/api/cars/:id?', (req, res) => {
 
 router.put('/api/cars/:id?', (req, res) => {
     const { id } = req.params;
-    console.log(id);
-    
     const { brand, model, year, color, doors, plate } = req.body;
 
     if(!brand || !model || !year || !color || !doors || !plate)
         return res.status(400).send({ message: "Dados inválidos" })
 
-    allCars.forEach(car => {
+    allCars.forEach((car) => {
         if(car.id == id){
             car.brand = brand;
             car.model = model;
