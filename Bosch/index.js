@@ -1,8 +1,9 @@
 const express = require('express');
-const router = require('./routes');
+const router = require('./startup/routes');
 const app = express();
 
-router(app);
+require('./startup/db')();
+require('./startup/routes')(app);
 
 const port = 8080;
 
