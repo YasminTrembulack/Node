@@ -5,6 +5,6 @@ const router = express.Router();
 router
     .post('/register', AuthController.register)
     .post('/login', AuthController.login)
-    .delete('/delete/:id', AuthController.delete)
+    .delete('/delete/:id', AuthController.verifyJWT, AuthController.delete)
     
 module.exports = router;

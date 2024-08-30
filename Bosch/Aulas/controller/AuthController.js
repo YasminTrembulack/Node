@@ -52,16 +52,16 @@ class AuthController {
 
     static async delete(req, res)
     {
-        const authHeader = req.headers.authorization;
+        // const authHeader = req.headers.authorization;
         const id = req.params.id;
         
-        const [scheme, token] = authHeader.split(' ');
+        // const [scheme, token] = authHeader.split(' ');
 
         if (!token) return res.status(401).json({ auth: false, message: 'No token provided.' });
         
-        jwt.verify(token, process.env.SECRET, function(err, decoded) {
-            if (err) return res.status(500).json({ message: 'Unauthorized' });
-        });
+        // jwt.verify(token, process.env.SECRET, function(err, decoded) {
+        //     if (err) return res.status(500).json({ message: 'Unauthorized' });
+        // });
         
         try {
             const user = await User.findOne({ _id: id });
@@ -72,8 +72,20 @@ class AuthController {
         } catch (error) {
             return res.status(500).send({ message: "Something failed" })
         }
+    }
 
+    static async verifyJWT(req, res, next)
+    {
+        const authHeader = req.headers.authorization;
+        const [scheme, token] = authHeader.split(' ');
 
+        if (!token) return res.status(401).json({ auth: false, message: 'No token provided.' });
+
+        jwt.verify(token, process.env.SECRET, function(err, decoded) {
+            if (err) return res.status(500).json({ message: 'Unauthorized' });
+            console.log(decoded);
+        });
+        next();
     }
 }
 module.exports = AuthController;
