@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { authorSchema } = require('./author');
 
 const Article = mongoose.model('Article', 
     new mongoose.Schema({
@@ -14,12 +13,22 @@ const Article = mongoose.model('Article',
             minlength: 15
         },
         author: {
-            type: authorSchema,
+            type:  mongoose.Schema.Types.ObjectId,
+            ref: 'Author',
             required: true
         },
+        category: {
+            type: String,
+            require: true
+        },
+        tags: [{
+            type:  mongoose.Schema.Types.ObjectId,
+            ref: 'Tag',
+            require: false
+        }],
         likes: {
-            type: Number, // Depois iremos mudar para um Array
-            required: true
+            type: [String], 
+            required: false
         },
         createdAt: {
             type: Date,
@@ -33,6 +42,10 @@ const Article = mongoose.model('Article',
             type: Date,
             required: false
         },
+        comments: [{
+            type:  mongoose.Schema.Types.ObjectId,
+            ref: 'Comment',
+        }]
     })
 );
 

@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
-const { authorSchema } = require('./author');
+const { Author } = require('./author');
 
-const User = mongoose.model('User', new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     author: {
-        type: authorSchema,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Author',
         required: true
     },
     login: {
@@ -33,6 +34,9 @@ const User = mongoose.model('User', new mongoose.Schema({
         type: Date,
         required: false
     },
-}))
+})
 
-module.exports = User
+const User = mongoose.model('User', userSchema);
+
+exports.User = User;
+exports.userSchema = userSchema;

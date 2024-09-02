@@ -1,12 +1,14 @@
 const express = require('express');
 const article = require('../src/routes/article');
 const author = require('../src/routes/author');
-const user = require('../src/routes/user');
+const auth = require('../src/routes/auth')
+const AuthController =  require('../src/controller/AuthController')
 
 module.exports = function(app) {
     app
         .use(express.json())
-        .use('/api/article', article)
-        .use('/api/author', author)
-        .use('/api/user', user)
+        .use('/api/article', AuthController.verifyJWT, article)
+        .use('/api/author', AuthController.verifyJWT, author)
+        .use('/api/auth', auth)
+
 }
