@@ -17,11 +17,6 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 6
     },
-    email: {
-        type: String,
-        required: true,
-        minlength: 6
-    },
     createdAt: {
         type: Date,
         required: true

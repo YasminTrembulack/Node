@@ -6,8 +6,5 @@ route
     .post('/', ArticleController.create)
     .delete('/:id', ArticleController.delete)
     .post('/like/:id', ArticleController.likeArticle)
-    .post('/comment/:id', ArticleController.commentArticle)
-    .get('/comment/:id', ArticleController.getComments)
-
 
 module.exports = route;

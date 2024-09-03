@@ -41,11 +41,7 @@ const Article = mongoose.model('Article',
         removedAt: {
             type: Date,
             required: false
-        },
-        comments: [{
-            type:  mongoose.Schema.Types.ObjectId,
-            ref: 'Comment',
-        }]
+        }
     })
 );
 

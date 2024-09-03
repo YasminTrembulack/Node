@@ -1,5 +1,4 @@
 const Article = require("../model/article");
-const { Comment } = require('../model/comment')
 
 class ArticleController {
 
@@ -59,63 +58,6 @@ class ArticleController {
         } catch (error) {
             // ArticleController.createLog(error);
             return res.status(500).send({ error: "Falha ao curtir", data: error.message });
-        }
-    };
-
-    static async commentArticle(req, res){
-        const { id } = req.params;
-        const { content } = req.body;
-
-        if(!id) return res.status(400).send({ message: "No id provider" });
-
-        const comment = {
-            user: req.userId,
-            content,
-            createdAt: Date.now()
-        }
-
-        try {
-            const article = await Article.findById(id);
-            if (!article) return res.status(400).send({ message: "Article not found" });
-
-            const newComment = await Comment.create(comment);
-
-            await Article.findByIdAndUpdate({_id: id}, { $push: { comments: newComment._id } });
-            return res.status(200).send({ message: 'Commented post with success'});
-        } catch (error) {
-            // ArticleController.createLog(error);
-            return res.status(500).send({ error: "Falha ao comentar", data: error.message });
-        }
-    };
-
-    static async getComments(req, res){
-        const { id } = req.params;
-
-        if(!id) return res.status(400).send({ message: "No id provider" });
-
-        try {
-            const article = await Article.findById(id).populate('comments.user');
-        if (!article) {
-            throw new Error('Article not found');
-        }
-
-        const commentDetails = await Promise.all(article.comments.map(async (comment) => {
-            // Se a referência do comentário já está embutida no artigo, você não precisa buscar novamente
-            // Se você realmente precisa buscar os comentários individualmente
-            return {
-                user: comment.user,  // Se você quer dados do usuário, já está na propriedade 'user' por causa do populate
-                content: comment.content
-            };
-        }))
-
-        console.log(commentDetails);
-        
-        
-        return res.status(200).send({ body: article.comments });
-
-        } catch (error) {
-            // ArticleController.createLog(error);
-            return res.status(500).send({ error: "Falha ao comentar", data: error.message });
         }
     };
 

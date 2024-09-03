@@ -29,11 +29,8 @@ class AuthController {
             }
         }
 
-
-
         const passwordCrypt = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
         const birthDate = moment(birth, "DD/MM/YYYY").toDate();
-  
         
         try {
             const author = new Author({
@@ -47,9 +44,8 @@ class AuthController {
             const newAuthor = await Author.create(author);
     
             const user = new User({
-                login,
                 author: newAuthor._id,
-                email,
+                login,
                 password: passwordCrypt,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
