@@ -1,5 +1,11 @@
-// const express = require('express');
-// const router = express.Router();
+const express = require('express');
+const router = express.Router();
+
+router.
+    post('/', (req, res) => {
+        console.log(req.body);
+
+    })
 
 // // .params é para enviarmos junto de mais uma barra 
 
@@ -21,4 +27,4 @@
 //     res.send(`Número recebido: ${numero}`);
 // });
 
-// module.exports = router
+module.exports = router
