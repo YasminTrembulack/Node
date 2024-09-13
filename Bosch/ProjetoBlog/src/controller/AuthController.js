@@ -6,17 +6,22 @@ require('dotenv').config();
 
 const CryptoJS = require("crypto-js");
 const moment = require('moment');
+const { config } = require('dotenv');
 
 class AuthController {
     static async register(req, res) {
-        const { name, birth, login,  email, password, confirmPassword } = req.body;
-
+        var key = process.env.SECRET;
+        var bytes = CryptoJS.AES.decrypt(req.body.jsonCrypt, key);
+        const decryptd = bytes.toString(CryptoJS.enc.Utf8);
+        const json = JSON.parse(decryptd);
+        // console.log(json);
+        
+        const { name, birth, login, email, password, confirmPassword } = json;
+        
         if (!name) return res.status(400).json({ message: "O nome é obrigatório" });
         if (!email) return res.status(400).json({ message: "O e-mail é obrigatório" });
         if (!password) return res.status(400).json({ message: "A senha é obrigatória" });
         if (!login) return res.status(400).json({ message: "O login é obrigatório" });
-
-        if (password != confirmPassword) return res.status(400).json({ message: "As senhas não conferem" });
 
         const userExist = await User.findOne({ $or: [{ email: email },{ login: login }] });
 
@@ -28,15 +33,20 @@ class AuthController {
                 return res.status(422).json({ message: "Login já está em uso" });
             }
         }
+        console.log(password);
+        console.log(confirmPassword);
+        
+        
+        if (password != confirmPassword) return res.status(400).json({ message: "As senhas não conferem" });
 
         const passwordCrypt = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
-        const birthDate = moment(birth, "DD/MM/YYYY").toDate();
+        // const birthDate = moment(birth, "DD/MM/YYYY").toDate();
         
         try {
             const author = new Author({
                 name,
                 email,
-                birth: birthDate,
+                birth,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
                 removedAt: null,
@@ -59,7 +69,12 @@ class AuthController {
     }
     
     static async login(req, res) {
-        const { login, password } = req.body;
+        var key = process.env.SECRET;
+        var bytes = CryptoJS.AES.decrypt(req.body.jsonCrypt, key);
+        const decryptd = bytes.toString(CryptoJS.enc.Utf8);
+        const json = JSON.parse(decryptd);
+      
+        const { login, password } = json;
 
         if (!login) return res.status(400).json({ message: "O e-mail é obrigatório" });
         if (!password) return res.status(400).json({ message: "A senha é obrigatória" });
@@ -67,17 +82,32 @@ class AuthController {
         const user = await User.findOne({ login: login }).populate('author');
 
         if (!user) return res.status(422).json({ message: "E-mail inválido" });
-
-        var key = process.env.SECRET;
-
+        
+        
         var userPassword = CryptoJS.AES.decrypt(user.password, key).toString(CryptoJS.enc.Utf8);
         if (userPassword != password) return res.status(422).json({ message: "Senha inválida" });
-    
-        const token = jwt.sign(
-            {name: user.name, id: user._id, author: user.author._id }, key, { expiresIn: 10800 }
-        );
         
-        return res.status(200).send({token: token})
+        try {
+            const token = jwt.sign(
+                {
+                    id: user._id,
+                },
+                key,
+                {
+                    expiresIn: '2 days'
+                }
+            );
+            
+            return res.status(200).send({token: token})
+        } catch (error) {
+            return res.status(500).send({ message: "Something failed", data: error.message })
+        }
+
+        // const token = jwt.sign(
+        //     {name: user.name, id: user._id, author: user.author._id }, key, { expiresIn: 10800 }
+        // );
+        
+        // return res.status(200).send({token: token})
     }
 
     static async verifyJWT(req, res, next)
